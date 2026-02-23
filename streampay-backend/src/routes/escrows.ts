@@ -53,3 +53,18 @@ escrowRouter.get('/:id', async (req: Request, res: Response) => {
 
   res.json({ ...escrow.rows[0], milestones: milestones.rows });
 });
+
+// Connect platform
+escrowRouter.post('/:id/connect', async (req: Request, res: Response) => {
+  const { platform, external_id, webhook_secret } = req.body;
+
+  const result = await db.query(
+    `INSERT INTO platform_connections (escrow_id, platform, external_id, webhook_secret)
+     VALUES ($1, $2, $3, $4)
+     ON CONFLICT (platform, external_id) DO UPDATE SET webhook_secret = $4
+     RETURNING *`,
+    [req.params.id, platform, external_id, webhook_secret]
+  );
+
+  res.status(201).json(result.rows[0]);
+});
