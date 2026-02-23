@@ -4,13 +4,14 @@ import { handleGithubWebhook } from '../adapters/github';
 export const webhookRouter = Router();
 
 webhookRouter.post('/github', async (req: Request, res: Response) => {
-  const event = req.headers['x-github-event'] as string;
-  console.log(`📨 GitHub event: ${event}`);
-  console.log(`📦 Payload: ${JSON.stringify(req.body, null, 2)}`);
+  const event  = req.headers['x-github-event'] as string;
+  const action = req.body?.action;
+  console.log(`📨 GitHub event: ${event} | action: ${action}`);
+  await handleGithubWebhook(req, res);
+});
 
-  if (event === 'projects_v2_item') {
-    await handleGithubWebhook(req, res);
-  } else {
-    res.json({ received: true, event });
-  }
+webhookRouter.post('/:platform', async (req: Request, res: Response) => {
+  const { platform } = req.params;
+  console.log(`📨 Webhook received from: ${platform} (adapter coming soon)`);
+  res.json({ received: true, platform });
 });

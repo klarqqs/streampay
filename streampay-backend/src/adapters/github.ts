@@ -1,25 +1,18 @@
-import { createHmac } from 'crypto';
 import { Request, Response } from 'express';
 import { TaskEvent } from '../types';
 import { processTaskEvent } from '../services/matcher';
-
-function verifySignature(req: Request): boolean {
-  const secret    = process.env.GITHUB_WEBHOOK_SECRET!;
-  const signature = req.headers['x-hub-signature-256'] as string;
-  if (!signature) return false;
-  const hmac    = createHmac('sha256', secret);
-  const digest  = 'sha256=' + hmac.update(JSON.stringify(req.body)).digest('hex');
-  return signature === digest;
-}
 
 export async function handleGithubWebhook(req: Request, res: Response): Promise<void> {
   const event   = req.headers['x-github-event'] as string;
   const payload = req.body;
 
-  // Handle issue closed = Done
+  console.log(`📨 GitHub event: ${event}, action: ${payload.action}`);
+
   if (event === 'issues' && payload.action === 'closed') {
-    const issue = payload.issue;
+    const issue    = payload.issue;
     const repoName = payload.repository.full_name;
+
+    console.log(`🔍 Issue closed: "${issue.title}" in ${repoName}`);
 
     const taskEvent: TaskEvent = {
       platform:   'github',
