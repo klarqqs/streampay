@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import crypto from 'crypto';
-import { pool } from '../db/client';
+import { db as pool } from '../db/client';
 import { requireAuth, requireOrgRole, AuthRequest } from '../middleware/auth';
 
 const router = Router();

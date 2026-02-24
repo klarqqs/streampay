@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import nacl from 'tweetnacl';
-import { pool } from '../db/client';
+import { db as pool } from '../db/client';
 import { requireAuth, AuthRequest } from '../middleware/auth';
 
 const router = Router();
