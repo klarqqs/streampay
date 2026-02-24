@@ -1,12 +1,16 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import { testConnection } from './db/client';
 import { webhookRouter } from './routes/webhooks';
 import { escrowRouter } from './routes/escrows';
+import authRouter from './routes/auth';
+import orgsRouter from './routes/orgs';
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 
 // Health check
@@ -17,6 +21,8 @@ app.get('/health', (_, res) => {
 // Routes
 app.use('/webhook', webhookRouter);
 app.use('/escrows', escrowRouter);
+app.use('/auth', authRouter);
+app.use('/orgs', orgsRouter);
 
 // Start
 async function start() {
